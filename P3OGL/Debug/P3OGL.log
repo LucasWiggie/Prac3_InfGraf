@@ -1,3 +1,36 @@
 ﻿cl : línea de comandos warning D9035: La opción 'Gm' está desusada y se quitará en próximas versiones
   main.cpp
-  P3OGL.vcxproj -> \\myappsdrive.alumnos.urjc.es\Home_VDI$\l.rubiol.2020\Documents\Inf Grafica\P3\P3OGL\P3OGL\Debug\P3OGL.exe
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(397,10): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(399,23): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(401,18): warning C4244: '=': conversión de 'double' a 'T'; posible pérdida de datos
+          with
+          [
+              T=float
+          ]
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(497,10): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(499,23): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(516,25): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(519,25): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(522,25): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(525,25): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(534,25): warning C4305: '+=': truncamiento de 'double' a 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(537,25): warning C4305: '-=': truncamiento de 'double' a 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(540,25): warning C4305: '-=': truncamiento de 'double' a 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\scr\main.cpp(543,25): warning C4305: '+=': truncamiento de 'double' a 'T'
+          with
+          [
+              T=float
+          ]
+  P3OGL.vcxproj -> C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\Debug\P3OGL.exe

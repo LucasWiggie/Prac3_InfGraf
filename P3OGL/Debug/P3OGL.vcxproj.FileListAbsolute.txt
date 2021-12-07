@@ -1,1 +1,1 @@
-\\myappsdrive.alumnos.urjc.es\Home_VDI$\l.rubiol.2020\Documents\Inf Grafica\P3\P3OGL\P3OGL\Debug\P3OGL.exe
+C:\Users\lucas\Documents\Universidad\2º DDV\1er Cuatrimestre\Informática Gráfica\Prácticas\Práctica 3\P3OGL\P3OGL\Debug\P3OGL.exe
