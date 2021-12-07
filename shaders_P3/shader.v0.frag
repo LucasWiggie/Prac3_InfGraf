@@ -7,7 +7,6 @@ in vec3 pos;
 in vec3 norm;
 in vec2 texCoord;
 
-//No le hemos pasaod estos uniforms, el shader los ha eliminado directamente 
 uniform sampler2D colorTex;
 uniform sampler2D emiTex;
 
