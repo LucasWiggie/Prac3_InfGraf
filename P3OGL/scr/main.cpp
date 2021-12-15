@@ -9,6 +9,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #define PI 3.1415926535897932384626433832795
@@ -25,8 +26,8 @@ glm::mat4	model = glm::mat4(1.0f);
 glm::mat4	model2 = glm::mat4(1.0f);
 
 //Variables de la Luz
-glm::vec3 lightPosition = glm::vec3(0.0, 0.0, 5.0);
-glm::vec3 lightIntensity = glm::vec3(0.5);
+glm::vec3 lightPosition = glm::vec3(0.0);
+glm::vec3 lightIntensity = glm::vec3(1.0);
 
 //////////////////////////////////////////////////////////////
 // Variables que nos dan acceso a Objetos OpenGL ( VARIABLES GLOBALES )
@@ -239,8 +240,8 @@ void initShader(const char *vname, const char *fname){
 	uModelViewProjMat = glGetUniformLocation(program, "modelViewProj");
 	uView = glGetUniformLocation(program, "view");
 	// Identificadores de los atributos de la luz 
-	uLightPosition = glGetUniformLocation(program, "lightPos");
-	uLightIntensity = glGetUniformLocation(program, "lightInt");
+	uLightPosition = glGetUniformLocation(program, "lightPosition");
+	uLightIntensity = glGetUniformLocation(program, "lightIntensity");
 
 	// Identificadores de las texturas
 	uColorTex = glGetUniformLocation(program, "colorTex");
@@ -257,7 +258,7 @@ void initShader(const char *vname, const char *fname){
 void initObj(){
 
 	// Crea y activa el VAO en el que se almacenará la configuración del objeto
-	glGenVertexArrays(1, &vao); //genera el vao
+	glGenVertexArrays(2, &vao); //genera el vao
 	glBindVertexArray(vao); //asignamos el vertex array al vao, lo activamos
 
 	// Crea y configura todos los atributos de la malla
@@ -347,7 +348,6 @@ GLuint loadShader(const char *fileName, GLenum type){
 		delete[] logString; //vaciamos la memoria de logString
 		glDeleteShader(shader); //borramos el shader
 		exit(-1);
-
 	}
 
 	return shader; 
@@ -418,6 +418,7 @@ void renderFunc(){
 	glm::mat4 modelView = view * model;
 	glm::mat4 modelViewProj = proj * view * model;
 	glm::mat4 normal = glm::transpose(glm::inverse(modelView));
+
 	//Utilizamos los identificadores creados en InitShader() que iddentifican las matrices dentro del shader, las subimos 
 	if (uModelViewMat != -1) //comprobamos que esa matriz está, (su id será -1 si el shader no al encuentra, es el valor por defecto)
 		glUniformMatrix4fv(uModelViewMat, 1, GL_FALSE,
@@ -431,12 +432,13 @@ void renderFunc(){
 	if (uNormalMat != -1)
 		glUniformMatrix4fv(uNormalMat, 1, GL_FALSE,
 			&(normal[0][0]));
+	
 	if (uLightPosition != -1)
-		glUniformMatrix4fv(uLightPosition, 1, GL_FALSE,
-			&(lightPosition.x));
+		glUniform3fv(uLightPosition, 1,
+			glm::value_ptr(lightPosition));
 	if (uLightIntensity != -1)
-		glUniformMatrix4fv(uLightIntensity, 1, GL_FALSE,
-			&(lightIntensity.x));
+		glUniform3fv(uLightIntensity, 1,
+			glm::value_ptr(lightIntensity));
 
 	//Texturas
 	if (uColorTex != -1)
@@ -467,7 +469,7 @@ void idleFunc(){
 	//Animacion del cubo girando con rotacion
 	model = glm::mat4(1.0f);
 	static float angle = 0.0f;
-	angle = (angle > 3.141592f * 2.0f) ? 0 : angle + 0.0001f;
+	angle = (angle > 3.141592f * 2.0f) ? 0 : angle + 0.000f;
 
 	model = glm::rotate(model, angle, glm::vec3(1.0f, 1.0f, 0.0f));
 
@@ -490,7 +492,6 @@ void keyboardFunc(unsigned char key, int x, int y){
 	std::cout << "Se ha pulsado la tecla " << key << std::endl << std::endl;
 
 	// Cada vez que movemos la camara, hay que recalcular el frustrum
-	//glm::mat4 proj = glm::mat4(1.0);
 	float f = 1.0f / tan(3.1415926535897932384626433832795 / 4);
 	float farPlane = 10.0;
 	float nearPlane = 0.1;
@@ -534,22 +535,16 @@ void keyboardFunc(unsigned char key, int x, int y){
 		lightPosition.z -= 0.2;
 		break;
 	case 'l':
-		lightPosition.x -= 0.2;
-		break;
-	case 'j':
 		lightPosition.x += 0.2;
 		break;
+	case 'j':
+		lightPosition.x -= 0.2;
+		break;
 	case 'u':
-		lightIntensity -= glm::vec3(0.1, 0.1, 0.1);
-		/*if (lightIntensity.x > 0 && lightIntensity.x < 1) {
-			lightIntensity -= glm::vec3(0.1, 0.1, 0.1);
-		}*/
+		lightIntensity -= 0.2;
 		break;
 	case 'o':
-		lightIntensity += glm::vec3(0.1, 0.1, 0.1);
-		/*if (lightIntensity.x > 0 && lightIntensity.x < 1) {
-			lightIntensity += glm::vec3(0.1, 0.1, 0.1);
-		}*/
+		lightIntensity += 0.2;
 		break;
 	}
 
@@ -558,7 +553,7 @@ void keyboardFunc(unsigned char key, int x, int y){
 	view[3].x = movementX;
 	proj = glm::rotate(proj, r_angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	view = glm::rotate(view, r_angle, glm::vec3(0.0f, 1.0f, 0.0f));
-	
+
 	glutPostRedisplay();
 }
 
