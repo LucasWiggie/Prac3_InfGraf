@@ -46,6 +46,7 @@ int uModelViewProjMat;
 int uNormalMat;
 int uColorTex;
 int uEmiTex;
+
 int uLightPosition;
 int uLightIntensity;
 
@@ -459,6 +460,50 @@ void renderFunc(){
 	glDrawElements(GL_TRIANGLES, cubeNTriangleIndex * 3,
 		GL_UNSIGNED_INT, (void*)0);
 
+
+
+	// OBJETO 2
+	// Activa el programa que hemos definido para usar los sahders
+	glUseProgram(program);
+
+	// Calcula y sube las matrices requeridas por el shader de vertices
+	modelView = view * model2;
+	modelViewProj = proj * view * model2;
+	normal = glm::transpose(glm::inverse(modelView));
+
+	//Utilizamos los identificadores creados en InitShader() que iddentifican las matrices dentro del shader, las subimos 
+	if (uModelViewMat != -1) //comprobamos que esa matriz está, (su id será -1 si el shader no al encuentra, es el valor por defecto)
+		glUniformMatrix4fv(uModelViewMat, 1, GL_FALSE,
+			&(modelView[0][0]));
+	if (uModelViewProjMat != -1)
+		glUniformMatrix4fv(uModelViewProjMat, 1, GL_FALSE,
+			&(modelViewProj[0][0]));
+	if (uView != -1)
+		glUniformMatrix4fv(uView, 1, GL_FALSE,
+			&(view[0][0]));
+	if (uNormalMat != -1)
+		glUniformMatrix4fv(uNormalMat, 1, GL_FALSE,
+			&(normal[0][0]));
+
+	//Texturas
+	if (uColorTex != -1)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, colorTexId);
+		glUniform1i(uColorTex, 0);
+	}
+	if (uEmiTex != -1)
+	{
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, emiTexId);
+		glUniform1i(uEmiTex, 1);
+	}
+
+	//Activa el VAO con la configuración del objeto y pinta la lista de triángulos
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, cubeNTriangleIndex * 3,
+		GL_UNSIGNED_INT, (void*)0);
+
 	// Después de haber pintado en el default frame bufefr (lienzo), debemos pasarlo al bufer de pantalla
 	glutSwapBuffers(); 
 }
@@ -469,7 +514,7 @@ void idleFunc(){
 	//Animacion del cubo girando con rotacion
 	model = glm::mat4(1.0f);
 	static float angle = 0.0f;
-	angle = (angle > 3.141592f * 2.0f) ? 0 : angle + 0.000f;
+	angle = (angle > 3.141592f * 2.0f) ? 0 : angle + 0.0001f;
 
 	model = glm::rotate(model, angle, glm::vec3(1.0f, 1.0f, 0.0f));
 
@@ -478,9 +523,9 @@ void idleFunc(){
 	static float r_angle = 0.0f;
 	r_angle = (r_angle > 3.141592f * 2.0f) ? 0 : r_angle + 0.0001f;
 	//Rotación sobre si mismo
-	model2 = glm::rotate(model2, angle, glm::vec3(1.0f, 1.0f, 0.0f));
+	model2 = glm::rotate(model2, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 	//Traslacion 
-	model2 = glm::translate(model2, glm::vec3(0.5, 0.0, 0.0));
+	model2 = glm::translate(model2, glm::vec3(3.0, 0.0, 0.0));
 	//Rotacion alrededor del otro objeto
 	model2 = glm::rotate(model2, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
