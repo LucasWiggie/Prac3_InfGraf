@@ -43,5 +43,17 @@
     <None Include="..\shaders_P3\shader.Ej1.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="..\shaders_P3\shader.Ej4a.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\shaders_P3\shader.Ej4b.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\shaders_P3\shader.Ej4a.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\shaders_P3\shader.Ej4b.frag">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

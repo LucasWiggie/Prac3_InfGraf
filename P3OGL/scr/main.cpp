@@ -38,6 +38,10 @@ unsigned int vshader;
 unsigned int fshader;
 unsigned int program;
 
+unsigned int vshader2;
+unsigned int fshader2;
+unsigned int program2;
+
 // Variables globales que nos permiten acceder a las variables uniformes y a los atributos
 // Variables Uniform
 int uView;
@@ -50,11 +54,26 @@ int uEmiTex;
 int uLightPosition;
 int uLightIntensity;
 
+int uView2;
+int uModelViewMat2;
+int uModelViewProjMat2;
+int uNormalMat2;
+int uColorTex2;
+int uEmiTex2;
+
+int uLightPosition2;
+int uLightIntensity2;
+
 //Atributos
 int inPos;
 int inColor;
 int inNormal;
 int inTexCoord;
+
+int inPos2;
+int inColor2;
+int inNormal2;
+int inTexCoord2;
 
 //VAO Vertex Array Object
 unsigned int vao;
@@ -70,6 +89,9 @@ unsigned int triangleIndexVBO;
 //Texturas
 unsigned int colorTexId;
 unsigned int emiTexId;
+
+unsigned int colorTexId2;
+unsigned int emiTexId2;
 
 //////////////////////////////////////////////////////////////
 // Funciones auxiliares
@@ -87,6 +109,7 @@ void mouseFunc(int button, int state, int x, int y);
 void initContext(int argc, char** argv);
 void initOGL();
 void initShader(const char *vname, const char *fname);
+void initShader2(const char* vname, const char* fname);
 void initObj();
 void destroy();
 
@@ -107,7 +130,8 @@ int main(int argc, char** argv)
 
 	initContext(argc, argv);
 	initOGL();
-	initShader("../shaders_P3/shader.Ej1.vert", "../shaders_P3/shader.Ej1.frag");
+	initShader("../shaders_P3/shader.Ej4a.vert", "../shaders_P3/shader.Ej4a.frag");
+	initShader2("../shaders_P3/shader.Ej4b.vert", "../shaders_P3/shader.Ej4b.frag");
 	initObj();
 
 	//Bucle de dibujado. Lo inicializamos después de haber inicializado el cauce y el contexto (todo lo de arriba)
@@ -181,18 +205,31 @@ void destroy(){
 	glDeleteShader(fshader);
 	glDeleteProgram(program);
 
+	glDetachShader(program2, vshader2);
+	glDetachShader(program2, fshader2);
+	glDeleteShader(vshader2);
+	glDeleteShader(fshader2);
+	glDeleteProgram(program2);
+
 	// Libera el espacio utilizado para los recursos del objeto
 	if (inPos != -1) glDeleteBuffers(1, &posVBO);
 	if (inColor != -1) glDeleteBuffers(1, &colorVBO);
 	if (inNormal != -1) glDeleteBuffers(1, &normalVBO);
 	if (inTexCoord != -1) glDeleteBuffers(1, &texCoordVBO);
-	glDeleteBuffers(1, &triangleIndexVBO);
+
+	if (inPos2 != -1) glDeleteBuffers(1, &posVBO);
+	if (inColor2 != -1) glDeleteBuffers(1, &colorVBO);
+	if (inNormal2 != -1) glDeleteBuffers(1, &normalVBO);
+	if (inTexCoord2 != -1) glDeleteBuffers(1, &texCoordVBO);
 	
+	glDeleteBuffers(1, &triangleIndexVBO);
 	glDeleteVertexArrays(1, &vao);
 
 	// Texturas
 	glDeleteTextures(1, &colorTexId);
 	glDeleteTextures(1, &emiTexId);
+	glDeleteTextures(1, &colorTexId2);
+	glDeleteTextures(1, &emiTexId2);
 
 }
 
@@ -256,10 +293,70 @@ void initShader(const char *vname, const char *fname){
 
 }
 
+void initShader2 (const char* vname, const char* fname) {
+	//// SHADER 2
+	// Cargamos el shader de vertices y de fragmentos con loadShader()
+	vshader2 = loadShader(vname, GL_VERTEX_SHADER);
+	fshader2 = loadShader(fname, GL_FRAGMENT_SHADER);
+
+	// Creamos un programa y enlazamos los shaders al programa
+	program2 = glCreateProgram();
+	glAttachShader(program2, vshader2);
+	glAttachShader(program2, fshader2);
+
+	// Asigna un identificador y posición de memoria a los atributos del programa (antes de enlazar el programa)
+	glBindAttribLocation(program2, 0, "inPos");
+	glBindAttribLocation(program2, 1, "inColor");
+	glBindAttribLocation(program2, 2, "inNormal");
+	glBindAttribLocation(program2, 3, "inTexCoord");
+
+	// Linkea el programa
+	glLinkProgram(program2);
+
+	// Comprobación de si ha habido error en la fase de enlazado
+	int linked;
+	glGetProgramiv(program2, GL_LINK_STATUS, &linked);
+	if (!linked) //si ha habdio un problema de compilación, linked = false 
+	{
+		//Calculamos una cadena de error
+		GLint logLen;
+		glGetProgramiv(program2, GL_INFO_LOG_LENGTH, &logLen);  //le asigna la cadena de error a logLen
+
+		char* logString = new char[logLen]; // reservamos memoria para logString, de tamaño logLen
+		glGetProgramInfoLog(program2, logLen, NULL, logString); //pedimos la info del error y la almacenamos en logString
+		std::cout << "Error: " << logString << std::endl;
+
+		delete[] logString; //vaciamos la memoria de logString
+		glDeleteProgram(program2); //borramos el programa 
+		program2 = 0;
+		exit(-1);
+	}
+
+	// Crea los identificadores de las variables uniformes 
+	uNormalMat2 = glGetUniformLocation(program2, "normal");
+	uModelViewMat2 = glGetUniformLocation(program2, "modelView");
+	uModelViewProjMat2 = glGetUniformLocation(program2, "modelViewProj");
+	uView2 = glGetUniformLocation(program2, "view");
+
+	// Identificadores de los atributos de la luz 
+	uLightPosition2 = glGetUniformLocation(program2, "lightPosition");
+	uLightIntensity2 = glGetUniformLocation(program2, "lightIntensity");
+
+	// Identificadores de las texturas
+	uColorTex2 = glGetUniformLocation(program2, "colorTex");
+	uEmiTex2 = glGetUniformLocation(program2, "emiTex");
+
+	// Crea los identificadores de los atributos
+	inPos2 = glGetAttribLocation(program2, "inPos");
+	inColor2 = glGetAttribLocation(program2, "inColor");
+	inNormal2 = glGetAttribLocation(program2, "inNormal");
+	inTexCoord2 = glGetAttribLocation(program2, "inTexCoord");
+}
+
 void initObj(){
 
 	// Crea y activa el VAO en el que se almacenará la configuración del objeto
-	glGenVertexArrays(2, &vao); //genera el vao
+	glGenVertexArrays(1, &vao); //genera el vao
 	glBindVertexArray(vao); //asignamos el vertex array al vao, lo activamos
 
 	// Crea y configura todos los atributos de la malla
@@ -301,6 +398,44 @@ void initObj(){
 		glEnableVertexAttribArray(inTexCoord);
 	}
 
+	if (inPos2 != -1)
+	{
+		glGenBuffers(1, &posVBO); //genera un buffer
+		glBindBuffer(GL_ARRAY_BUFFER, posVBO); //vincula el buffer a la variable posVBO
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex * sizeof(float) * 3,
+			cubeVertexPos, GL_STATIC_DRAW);
+		glVertexAttribPointer(inPos2, 3, GL_FLOAT, GL_FALSE, 0, 0); // una vez creamos el buffer, definimos el puntero al atributo inPos
+		// define an array of generic vertex attribute data
+		glEnableVertexAttribArray(inPos2); // Activamos el puntero
+	}
+	if (inColor2 != -1)
+	{
+		glGenBuffers(1, &colorVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex * sizeof(float) * 3,
+			cubeVertexColor, GL_STATIC_DRAW);
+		glVertexAttribPointer(inColor2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inColor2);
+	}
+	if (inNormal2 != -1)
+	{
+		glGenBuffers(1, &normalVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex * sizeof(float) * 3,
+			cubeVertexNormal, GL_STATIC_DRAW);
+		glVertexAttribPointer(inNormal2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inNormal2);
+	}
+	if (inTexCoord2!= -1)
+	{
+		glGenBuffers(1, &texCoordVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex * sizeof(float) * 2,
+			cubeVertexTexCoord, GL_STATIC_DRAW);
+		glVertexAttribPointer(inTexCoord2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inTexCoord2);
+	}
+
 	// Crea la lista de indices
 	glGenBuffers(1, &triangleIndexVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangleIndexVBO);
@@ -315,6 +450,8 @@ void initObj(){
 	// Cargamos las texturas
 	colorTexId = loadTex("../img/color2.png");
 	emiTexId = loadTex("../img/emissive.png");
+	colorTexId2 = loadTex("../img/color2.png");
+	emiTexId2 = loadTex("../img/emissive.png");
 
 }
 
@@ -464,7 +601,7 @@ void renderFunc(){
 
 	// OBJETO 2
 	// Activa el programa que hemos definido para usar los sahders
-	glUseProgram(program);
+	glUseProgram(program2);
 
 	// Calcula y sube las matrices requeridas por el shader de vertices
 	modelView = view * model2;
@@ -472,31 +609,38 @@ void renderFunc(){
 	normal = glm::transpose(glm::inverse(modelView));
 
 	//Utilizamos los identificadores creados en InitShader() que iddentifican las matrices dentro del shader, las subimos 
-	if (uModelViewMat != -1) //comprobamos que esa matriz está, (su id será -1 si el shader no al encuentra, es el valor por defecto)
-		glUniformMatrix4fv(uModelViewMat, 1, GL_FALSE,
+	if (uModelViewMat2 != -1) //comprobamos que esa matriz está, (su id será -1 si el shader no al encuentra, es el valor por defecto)
+		glUniformMatrix4fv(uModelViewMat2, 1, GL_FALSE,
 			&(modelView[0][0]));
-	if (uModelViewProjMat != -1)
-		glUniformMatrix4fv(uModelViewProjMat, 1, GL_FALSE,
+	if (uModelViewProjMat2 != -1)
+		glUniformMatrix4fv(uModelViewProjMat2, 1, GL_FALSE,
 			&(modelViewProj[0][0]));
-	if (uView != -1)
-		glUniformMatrix4fv(uView, 1, GL_FALSE,
+	if (uView2 != -1)
+		glUniformMatrix4fv(uView2, 1, GL_FALSE,
 			&(view[0][0]));
-	if (uNormalMat != -1)
-		glUniformMatrix4fv(uNormalMat, 1, GL_FALSE,
+	if (uNormalMat2 != -1)
+		glUniformMatrix4fv(uNormalMat2, 1, GL_FALSE,
 			&(normal[0][0]));
 
+	if (uLightPosition2 != -1)
+		glUniform3fv(uLightPosition2, 1,
+			glm::value_ptr(lightPosition));
+	if (uLightIntensity2 != -1)
+		glUniform3fv(uLightIntensity2, 1,
+			glm::value_ptr(lightIntensity));
+
 	//Texturas
-	if (uColorTex != -1)
+	if (uColorTex2 != -1)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, colorTexId);
-		glUniform1i(uColorTex, 0);
+		glBindTexture(GL_TEXTURE_2D, colorTexId2);
+		glUniform1i(uColorTex2, 0);
 	}
-	if (uEmiTex != -1)
+	if (uEmiTex2 != -1)
 	{
 		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, emiTexId);
-		glUniform1i(uEmiTex, 1);
+		glBindTexture(GL_TEXTURE_2D, emiTexId2);
+		glUniform1i(uEmiTex2, 1);
 	}
 
 	//Activa el VAO con la configuración del objeto y pinta la lista de triángulos

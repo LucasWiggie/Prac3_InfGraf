@@ -21,6 +21,10 @@
   <ItemGroup>
     <None Include="..\shaders_P3\shader.Ej1.frag" />
     <None Include="..\shaders_P3\shader.Ej1.vert" />
+    <None Include="..\shaders_P3\shader.Ej4a.frag" />
+    <None Include="..\shaders_P3\shader.Ej4a.vert" />
+    <None Include="..\shaders_P3\shader.Ej4b.frag" />
+    <None Include="..\shaders_P3\shader.Ej4b.vert" />
     <None Include="..\shaders_P3\shader.v0.frag" />
     <None Include="..\shaders_P3\shader.v0.vert" />
     <None Include="..\shaders_P3\shader.v1.frag" />
