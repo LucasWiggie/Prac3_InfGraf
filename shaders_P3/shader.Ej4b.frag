@@ -25,7 +25,7 @@ float alpha = 5000.0;
 vec3 Ke;
 
 //Propiedades de la luz
-vec3 Ia = vec3 (0.3);
+vec3 Ia = vec3 (0.5, 0.0, 0.3);
 vec3 Id = lightIntensity;
 vec3 Is = lightIntensity;
 vec3 lpos = (view*vec4(lightPosition, 1.0)).xyz; 
